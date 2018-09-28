@@ -18,7 +18,7 @@ app.get('/', function(req, res) {
 
 app.get('/getHello', (req, res) => {
 	console.log('getHello calling getHello')
-  res.send('Hello world\n');
+  res.send('Hello worldddd\n');
 });
 
 app.listen(PORT, HOST);
