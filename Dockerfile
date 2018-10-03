@@ -10,7 +10,7 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
-#Tacle the issue 
+#TO TACLE BELOW ISSUE
 #npm ERR! code UNABLE_TO_GET_ISSUER_CERT_LOCALLY
 #npm ERR! errno UNABLE_TO_GET_ISSUER_CERT_LOCALLY
 #npm ERR! request to https://registry.npmjs.org/express failed, reason: unable to get local issuer certificate
@@ -20,7 +20,7 @@ COPY package*.json ./
 
 RUN npm config set strict-ssl=false
 
-#TO TACLE THE ISSUE
+#TO TACLE BELOW ISSUE
 #npm ERR! code E403
 #npm ERR! 403 Forbidden: term-size@^1.2.0
 
