@@ -1,0 +1,10 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+     - "8080:8080"
+  soffice:
+    image: "lcrea/libreoffice-headless"
+    ports:
+     - "8100:8100"

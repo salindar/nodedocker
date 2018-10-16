@@ -18,13 +18,13 @@ COPY package*.json ./
 #npm ERR! A complete log of this run can be found in:
 #npm ERR!     /root/.npm/_logs/2018-10-03T17_41_17_505Z-debug.log
 
-RUN npm config set strict-ssl=false
 
 #TO TACLE BELOW ISSUE
 #npm ERR! code E403
 #npm ERR! 403 Forbidden: term-size@^1.2.0
 
 RUN npm config set always-auth=true
+RUN npm config set registry http://registry.npmjs.org/
 
 RUN npm install
 
