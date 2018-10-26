@@ -1,4 +1,4 @@
-import { SET_SELECTED_FILE,SET_NETWORK_ACTION,SET_CLIP_BOARD_ITEM } from '../types/actionConstants';
+import { SET_SELECTED_FILE,SET_NETWORK_ACTION,SET_CLIP_BOARD_ITEM, AUTHENTIICATED } from '../types/actionConstants';
 export const setSelectedFile = (fileName) => {
     console.log('setSelectedFile');
     return dispatch => {
@@ -28,6 +28,17 @@ export const setClipBoadItem = (url) => {
             type: SET_CLIP_BOARD_ITEM,
             payload: {
                 url
+            }
+        })
+    }
+}
+
+export const setAuthenticated = (authenticated) => {
+    return dispatch => {
+        dispatch({
+            type: AUTHENTIICATED,
+            payload: {
+                authenticated
             }
         })
     }
