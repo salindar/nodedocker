@@ -1,12 +1,8 @@
-// import React from 'react';
-// import ReactDOM from 'react-dom';
-// import App from './App';
-
-// ReactDOM.render(<App />, document.getElementById('root'));
-
+/*
+Salinda Rathnayeka
+*/
 import React from 'react';
 import ReactDOM from 'react-dom';
-// main app
 import App from './containers/App';
 import { Provider } from 'react-redux';
 import AppRoutes from './route';

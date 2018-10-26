@@ -1,3 +1,6 @@
+/*
+Salinda Rathnayeka
+*/
 import { createStore, combineReducers, applyMiddleware,compose } from 'redux'
 import fileState from './reducers/fileReducer'
 import thunk from 'redux-thunk'

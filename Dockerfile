@@ -1,3 +1,6 @@
+#This app is docarized however this cannot be run in docker environment as 
+#LibreOffice is not available in docker for the document conversion
+
 FROM node:8
 
 

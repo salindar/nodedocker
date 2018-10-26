@@ -6,9 +6,21 @@ const path = require('path');
 const fs = require('fs');
 const app = express();
 const bodyParser = require('body-parser');
+
+/*
+SERVER LEVEL CONFIGURATIONS
+*/
+//This is where the share location which uploaded file will be placed
+const FILE_SHARE_LOACTION = "//MS179PWRMM01/retalix/powernet/customer/PowerNetCustomerV65/customer/messages/uploads/";
+const MAX_AGE = 900000; //15 minutes session time, after 15 min automatically user logs out
+const LOG_FILE = 'auditLog.log'; //All the access logs are recorded here
+/*
+END OF SERVER LEVEL CONFIGURATIONS
+*/
+
 const SimpleNodeLogger = require('simple-node-logger'),
     opts = {
-        logFilePath: 'auditLog.log',
+        logFilePath: LOG_FILE,
         timestampFormat: 'YYYY-MM-DD HH:mm:ss.SSS'
     },
     log = SimpleNodeLogger.createSimpleLogger(opts);
@@ -22,25 +34,14 @@ app.use(require('express-session')({
     secret: 'secret_text', // The secret is required, and is used for signing cookies
     resave: true, // Force save of session for each request.
     saveUninitialized: false, // Save a session that is new, but has not been modified
-    cookie: { maxAge: 150000 }
+    cookie: { maxAge: MAX_AGE }
 
 }));
 
 app.use(express.static('dist'));
 app.use(fileUpload());
 app.use('/public', express.static(__dirname + '/public'));
-app.get('/health', function (req, res) {
 
-    // simple count for the session
-    if (!req.session.count) {
-        req.session.count = 0;
-    }
-    req.session.count += 1;
-
-    // send info as json
-    res.json(req.session);
-
-});
 app.post('/api/login', function (req, res) {
 
     let username = req.body.username;
@@ -78,32 +79,27 @@ app.get('/api/authenticated', function (req, res) {
     }
 });
 
-const FILE_SHARE_LOACTION = "//MS179PWRMM01/retalix/powernet/customer/PowerNetCustomerV65/customer/messages/uploads/";
-//const FILE_SHARE_LOACTION = 'C:/Users/srat0350/Desktop/Sysco Dev/nodedocker/uploads';
-
 const saveInFileSysytem = (fileToSave, fileSaveLocation, fileName, username) => {
     return new Promise((resolve, reject) => {
         fileToSave.mv(FILE_SHARE_LOACTION + fileName, function (err) {
             if (err) {
                 reject("");
                 console.error('/api/upload ERROR ' + err);
-                log.info('User: ', username, ' failed the upload ', fileName, ' at ',new Date().toJSON());
+                log.error('User: ', username, ' failed the upload ', fileName, ' at ', new Date().toJSON());
             }
             resolve("");
-            log.info('User: ', username, ' uploaded the file ', fileName, ' at ',new Date().toJSON());
-            console.log('/api/upload SUCESS ' + fileSaveLocation);
+            log.info('User: ', username, ' uploaded the file ', fileName, ' at ', new Date().toJSON());
         });
     });
 }
 
 const converOfficeDocToPdf = (fileLoaction, fileName, res) => {
-    console.log('converOfficeDocToPdf')
+
     var wordBuffer = fs.readFileSync(fileLoaction);
     let trimmedFilename = fileName.split('.').slice(0, -1).join('.');
     let newPdfName = trimmedFilename + '.pdf';
     toPdf(wordBuffer).then(
         (pdfBuffer) => {
-            //fs.writeFileSync('./uploads/' + newPdfName, pdfBuffer);
             fs.writeFileSync(FILE_SHARE_LOACTION + newPdfName, pdfBuffer);
             console.log('Conversion seccess.');
             res.send({ file: newPdfName });
@@ -113,14 +109,12 @@ const converOfficeDocToPdf = (fileLoaction, fileName, res) => {
     )
 }
 app.post('/api/upload', async (req, res, next) => {
-    console.log('/api/upload' + req.session.authenticated);
     if (!req.session.authenticated) {
         res.status(401).send({ status: 'Unauthenticated' });
     } else {
         console.log(req);
         let fileToSave = req.files.file;
         let fileName = req.body.filename;
-        //fileName = fileName.replace(/[`~!@#$%^&*()_|+\-=?;:'",<>\{\}\[\]\\\/]/gi, '');
         fileName = fileName.replace(/[\,%\s@#]+/g, '');
 
         var fileSaveLocation = path.join('./uploads', fileName);
