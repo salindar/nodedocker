@@ -1,3 +1,6 @@
+/*
+Salinda Rathnayeka
+*/
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const fileExtension = require('file-extension');
@@ -79,9 +82,14 @@ app.get('/api/authenticated', function (req, res) {
     }
 });
 
-const saveInFileSysytem = (fileToSave, fileSaveLocation, fileName, username) => {
+const saveInFileSysytem = (fileToSave, fileName, username, local) => {
+    var fileSaveLocation = path.join('./uploads', fileName);
+    let location = FILE_SHARE_LOACTION+fileName;
+    if (local) {
+        location = fileSaveLocation;
+    }
     return new Promise((resolve, reject) => {
-        fileToSave.mv(FILE_SHARE_LOACTION + fileName, function (err) {
+        fileToSave.mv(location, function (err) {
             if (err) {
                 reject("");
                 console.error('/api/upload ERROR ' + err);
@@ -124,10 +132,10 @@ app.post('/api/upload', async (req, res, next) => {
         let username = req.session.username;
 
         if ('pdf' === fileType) {
-            saveInFileSysytem(fileToSave, fileSaveLocation, fileName, username);
+            saveInFileSysytem(fileToSave, fileName, username, false);
             res.send({ file: fileName });
         } else if ('docx' === fileType || 'xlsx' === fileType || 'xls' === fileType) {
-            await saveInFileSysytem(fileToSave, fileSaveLocation, fileName, username);
+            await saveInFileSysytem(fileToSave, fileName, username, true);
             converOfficeDocToPdf(fileSaveLocation, fileName, res);
         } else {
             return res.status(400).send({ error: 'File type not supprted.' });
